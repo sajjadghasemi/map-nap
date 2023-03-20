@@ -1,91 +1,179 @@
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from './page.module.css'
+"use client";
 
-const inter = Inter({ subsets: ['latin'] })
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import L from "leaflet";
+
+export const iconPerson = new L.Icon({
+    iconUrl: require("../public/marker2.png").default.src,
+    iconRetinaUrl: require("../public/marker2.png").default.src,
+    iconAnchor: null,
+    popupAnchor: null,
+    shadowUrl: null,
+    shadowSize: null,
+    shadowAnchor: null,
+    iconSize: new L.Point(55, 55),
+    className: "leaflet-div-icon transparent",
+});
+
+function DraggableMarkerMabda(props) {
+    const [lat, setLat] = useState();
+    const [lng, setLng] = useState();
+    const [draggable, setDraggable] = useState(props.mabda);
+
+    useEffect(() => {
+        const successCallback = (position) => {
+            setLat(position.coords.latitude);
+            setLng(position.coords.longitude);
+        };
+
+        const errorCallback = (error) => {
+            console.log(error);
+        };
+
+        navigator.geolocation.getCurrentPosition(
+            successCallback,
+            errorCallback
+        );
+    }, []);
+
+    const markerRef = useRef(null);
+
+    const eventHandlers = useMemo(
+        () => ({
+            dragend() {
+                const marker = markerRef.current;
+                if (marker != null) {
+                    console.log(markerRef.current._latlng);
+                }
+            },
+        }),
+        []
+    );
+
+    if (!lat && !lng) return <h1>Loading...</h1>;
+
+    return (
+        <Marker
+            draggable={draggable}
+            eventHandlers={eventHandlers}
+            position={[lat, lng]}
+            ref={markerRef}
+            icon={iconPerson}
+        ></Marker>
+    );
+}
+
+function DraggableMarkerMaghsad() {
+    const [lat, setLat] = useState();
+    const [lng, setLng] = useState();
+
+    useEffect(() => {
+        const successCallback = (position) => {
+            setLat(position.coords.latitude);
+            setLng(position.coords.longitude);
+        };
+
+        const errorCallback = (error) => {
+            console.log(error);
+        };
+
+        navigator.geolocation.getCurrentPosition(
+            successCallback,
+            errorCallback
+        );
+    }, []);
+
+    const markerRef = useRef(null);
+
+    const eventHandlers = useMemo(
+        () => ({
+            dragend() {
+                const marker = markerRef.current;
+                if (marker != null) {
+                    console.log(markerRef.current._latlng);
+                }
+            },
+        }),
+        []
+    );
+
+    if (!lat && !lng) return <h1>Loading...</h1>;
+
+    return (
+        <Marker
+            draggable={true}
+            eventHandlers={eventHandlers}
+            position={[lat, lng]}
+            ref={markerRef}
+            icon={iconPerson}
+        ></Marker>
+    );
+}
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.js</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+    const [lat, setLat] = useState();
+    const [lng, setLng] = useState();
+    const [mabda, setMabda] = useState(true);
+    const [maghsad, setMaghsad] = useState(false);
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-        <div className={styles.thirteen}>
-          <Image src="/thirteen.svg" alt="13" width={40} height={31} priority />
-        </div>
-      </div>
+    useEffect(() => {
+        const successCallback = (position) => {
+            setLat(position.coords.latitude);
+            setLng(position.coords.longitude);
+        };
 
-      <div className={styles.grid}>
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+        const errorCallback = (error) => {
+            console.log(error);
+        };
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>Explore the Next.js 13 playground.</p>
-        </a>
+        navigator.geolocation.getCurrentPosition(
+            successCallback,
+            errorCallback
+        );
+    }, []);
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={inter.className}>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p className={inter.className}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    const acceptTheMabda = () => {
+        setMabda(false);
+        setMaghsad(true);
+    };
+
+    if (!lat && !lng) return <h1>Loading...</h1>;
+
+    return (
+        <>
+            <main
+                style={{
+                    width: "80%",
+                    height: "80vh",
+                    margin: "20px",
+                    border: "2px solid white",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <MapContainer
+                    center={[lat, lng]}
+                    zoom={18}
+                    scrollWheelZoom={true}
+                >
+                    <TileLayer
+                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    <DraggableMarkerMabda mabda={mabda} />
+                    {maghsad && <DraggableMarkerMaghsad />}
+                </MapContainer>
+            </main>
+            <button
+                style={{ padding: "1rem 1rem", cursor: "pointer" }}
+                onClick={acceptTheMabda}
+            >
+                Mabda
+            </button>
+        </>
+    );
 }
